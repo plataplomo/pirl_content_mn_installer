@@ -1,11 +1,11 @@
 #!/bin/bash
 
 SECTION_SEPARATOR="========================================="
-ENV_PATH=/etc/pirlnode-env
-DOWNLOAD_LINK_PREMIUM="https://git.pirl.io/community/pirl/uploads/8f3823838355d18b5d6d9b16129c2499/pirl-linux-amd64-v5-masternode-premium-hulk"
-DOWNLOAD_LINK_MARLIN="https://git.pirl.io/community/pirl/uploads/f991222e04b2525cfb4a94a078f7247b/marlin-v5-masternode-premium-hulk"
-PREMIUM_PATH=/usr/local/bin/pirl-premium-core
-MARLIN_PATH=/usr/local/bin/pirl-premium-marlin
+ENV_PATH=/etc/pirlnode-content-env
+DOWNLOAD_LINK_PREMIUM="https://git.pirl.io/community/pirl/uploads/9f6b22ff763e01353648202bb3718e74/pirl-linux-amd64-v5-masternode-content-hulk"
+DOWNLOAD_LINK_MARLIN="https://git.pirl.io/community/pirl/uploads/7b44acaa183a620bd1e57c1663ee9b72/marlin-v5-masternode-content-hulk"
+PREMIUM_PATH=/usr/local/bin/pirl-content-core
+MARLIN_PATH=/usr/local/bin/pirl-content-marlin
 
 echo $SECTION_SEPARATOR
 echo
@@ -189,7 +189,7 @@ Restart=always
 
 [Install]
 WantedBy=default.target
-">/etc/systemd/system/pirlnode.service
+">/etc/systemd/system/pirlnode-content.service
 
 if [[ -f $ENV_PATH ]]; then
 	echo "Tokens haven't been changed"
@@ -203,18 +203,18 @@ fi
 systemctl daemon-reload
 
 ####enable the node
-systemctl enable pirlnode
+systemctl enable pirlnode-content
 
 ###start the node
-systemctl restart pirlnode
+systemctl restart pirlnode-content
 
 
 ############ populate files for systemd-marlin service #########
 echo "Create pirl-marlin systemd unit file, install, and start."
 echo "[Unit]
 Description=Pirl Client -- marlin content service
-After=network.target pirlnode.service
-Wants=network.target pirlnode.service
+After=network.target pirlnode-content.service
+Wants=network.target pirlnode-content.service
 
 [Service]
 EnvironmentFile=$ENV_PATH
@@ -229,7 +229,7 @@ Restart=always
 
 [Install]
 WantedBy=default.target
-">/etc/systemd/system/pirlmarlin.service
+">/etc/systemd/system/pirlmarlin-content.service
 
 if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 	rm -rf $homedir/.marlin/
@@ -260,10 +260,10 @@ fi
 systemctl daemon-reload
 
 ####enable the node
-systemctl enable pirlmarlin
+systemctl enable pirlmarlin-content
 
 ###start the node
-systemctl restart pirlmarlin
+systemctl restart pirlmarlin-content
 
 
 echo $SECTION_SEPARATOR
@@ -292,10 +292,10 @@ fi
 echo "All done!"
 echo
 echo "Commands you can run now:"
-echo "Check PIRL-node status with: 'systemctl status pirlnode'"
-echo "Check PIRL-marlin status with: 'systemctl status pirlmarlin'"
-echo "Watch PIRL-node system logs with: 'journalctl -f -u pirlnode'"
-echo "Watch PIRL-marlin system logs with: 'journalctl -f -u pirlmarlin'"
+echo "Check PIRL-node status with: 'systemctl status pirlnode-content'"
+echo "Check PIRL-marlin status with: 'systemctl status pirlmarlin-content'"
+echo "Watch PIRL-node system logs with: 'journalctl -f -u pirlnode-content'"
+echo "Watch PIRL-marlin system logs with: 'journalctl -f -u pirlmarlin-content'"
 if [ "$SET_FIREWALL" = "y" ]; then
    echo "Check firewall status with: 'ufw status'"
 fi
